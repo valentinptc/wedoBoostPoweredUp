@@ -1022,8 +1022,13 @@ WedoBoostPoweredUp.prototype.pingMotor = function (uuid) {
 
                                     } else if (this.wedoBoostPoweredUp[uuid].deviceType === "poweredUp" || this.wedoBoostPoweredUp[uuid].deviceType === "technicHub" || this.wedoBoostPoweredUp[uuid].deviceType === "handset" ) {
                                         if (thisMotor.motorDegree === null) {
-                                            this.writeTo(uuid, this.poweredUpHub, Buffer([0x07, 0x00, 0x81, key, 0x11, 0x07, parseInt(thisMotor.motorResult)]), function () {
-                                            });
+                                            if(this.wedoBoostPoweredUp[uuid].deviceType !== "technicHub") {
+                                            this.writeTo(uuid, this.poweredUpHub, Buffer([0x07, 0x00, 0x81, key, 0x11, 0x07, parseInt(thisMotor.motorResult)]), function () {});
+                                            } else {
+                                                let motorbytes = this.numberTo4ByteArray(100000);
+                                                this.writeTo(uuid, this.poweredUpHub, Buffer([0x0D, 0x00, 0x81, key, 0x11, 0x0B, motorbytes[0], motorbytes[1], motorbytes[2], motorbytes[3], parseInt(thisMotor.motorResult), 100, 127, 0x11]), function () {
+                                                });
+                                            }
                                         } else {
                                             let motorbytes = this.numberTo4ByteArray(thisMotor.motorDegree);
                                             console.log(parseInt(thisMotor.motorResult));
