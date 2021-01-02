@@ -397,7 +397,7 @@ WedoBoostPoweredUp.prototype.handshake = function (uuid, callback, deviceType) {
                         });
                     } else if (connectedDevice === 0x25) {
                         thisPort.type = "visionSensor";
-                        this.writePortDefinitionToBoost(uuid, thisPort.byte, 0x06, framerate, function () {
+                        this.writePortDefinitionToBoost(uuid, thisPort.byte, 0x06 , framerate, function () {
                             console.log("activated vision sensor on port " + thisPort.byte + " @ " + uuid);
                         });
                     } else if (connectedDevice === 0x01) {
@@ -469,7 +469,15 @@ WedoBoostPoweredUp.prototype.handshake = function (uuid, callback, deviceType) {
                     this.emit('distanceSensor', this.wedoBoostPoweredUp[uuid].distanceValue, thisPort.byte, uuid);
 
                 } else if (this.wedoBoostPoweredUp[uuid].port[thisPort.byte].type === "visionSensor") {
-                    this.wedoBoostPoweredUp[uuid].colorLuminanceValue = {r: data[4], g: data[6], b: data[8]};
+                    console.log(data);
+                    let r = data[4];
+                    let g = data[6];
+                    let b = data[8];
+                    if(data[5]) r = r+255;
+                    if(data[7]) g = g+255;
+                    if(data[9]) b = b+255;
+
+                    this.wedoBoostPoweredUp[uuid].colorLuminanceValue = {r: r, g: g, b: b};
                     this.emit('visionSensor', this.wedoBoostPoweredUp[uuid].colorLuminanceValue, thisPort.byte, uuid);
                 } else if (this.wedoBoostPoweredUp[uuid].port[thisPort.byte].type === "motor") {
                     //console.log(thisPort.byte, this.wedoBoostPoweredUp[uuid].port[thisPort.byte].type ,  data);
